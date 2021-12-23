@@ -31,17 +31,15 @@ def api_create_product():
 
 @store.route('/admin/category/create', methods=['POST'])
 def api_create_category():
-    if request.method == "POST" and request.is_json:
-        data = request.get_json()
+    if request.method == "POST":
+        data = request.get_json() or request.form
 
         category = Category.query.filter_by(
             slug=data.get('slug', '')).first()
 
         if not category:
-            print(data.get('name'))
-            return add_category(category_name=data.get('name'))
-    else:
-        return jsonify({"error": "The request payload is not in JSON format"})
+            print(data.get('name', ''))
+            return add_category(category_name=data.get('name', ''))
 
 
 def add_product(name, description, price, category_id, image=None):

@@ -14,8 +14,6 @@ class Category(db.Model):
 
     def __init__(self, *args, **kwargs):
         if not 'slug' in kwargs:
-            print("HERE!")
-            print(kwargs.get('name'))
             kwargs['slug'] = slugify(kwargs.get('name', ''))
         super().__init__(*args, **kwargs)
 
