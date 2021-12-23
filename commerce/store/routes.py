@@ -10,23 +10,21 @@ from .models import Category, Product
 store = Blueprint('store', __name__)
 
 
-@store.route('/store/product/create', methods=['POST'])
+@store.route('/admin/product/create', methods=['POST'])
 def api_create_product():
     if request.method == "POST":
-        # data = request.get_json()
+        data = request.get_json() or request.form
         product = Product.query.filter_by(
-            slug=request.args.get('slug', '')).first()
+            slug=data.get('slug', '')).first()
 
         if not product:
-            name = request.args.get('name', '')
-            price = request.args.get('price', '')
-            description = request.args.get('description', '')
-            image = request.files.get('image', None)
-            category_id = request.args.get('category_id', '')
+            name = data.get('name', '')
+            price = data.get('price', '')
+            description = data.get('description', '')
+            image = data.get('image', None)
+            print(image)
+            category_id = data.get('category_id', '')
             return add_product(name, description, price, category_id, image)
-
-    else:
-        return jsonify({"error": "The request payload is not in JSON format"})
 
 
 @store.route('/admin/category/create', methods=['POST'])
@@ -40,6 +38,16 @@ def api_create_category():
         if not category:
             print(data.get('name', ''))
             return add_category(category_name=data.get('name', ''))
+
+
+@store.route('/store/categories')
+def all_categories():
+    return get_categories()
+
+
+@store.route('/store/products')
+def all_products():
+    return get_products()
 
 
 def add_product(name, description, price, category_id, image=None):
@@ -60,3 +68,13 @@ def add_category(category_name):
     db.session.add(category)
     db.session.commit()
     return jsonify(Category=category.serialize)
+
+
+def get_categories():
+    categories = db.session.query(Category).all()
+    return jsonify(categories=[category.serialize for category in categories])
+
+
+def get_products():
+    products = db.session.query(Product).all()
+    return jsonify(products=[product.serialize for product in products])
