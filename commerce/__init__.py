@@ -25,7 +25,7 @@ def create_app(config_class=Config):
     app.register_blueprint(users)
     app.register_blueprint(store)
 
-    # from cbtexam.admin.models import BlacklistToken
+    # from commerce.store.models import Category, Product, Order, OrderItem
     # with app.app_context():
     #     db.create_all()
 
