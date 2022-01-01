@@ -9,6 +9,8 @@ from .models import Category, Product
 
 store = Blueprint('store', __name__)
 
+ROWS_PER_PAGE = 7
+
 
 @store.route('/admin/product/create', methods=['POST'])
 def api_create_product():
@@ -73,6 +75,21 @@ def add_category(category_name):
 def get_categories():
     categories = db.session.query(Category).all()
     return jsonify(categories=[category.serialize for category in categories])
+
+
+# using the slug of the category, get products in said category
+def get_products_in_category(slug):
+    page = request.args.get('page', 1, type=int)
+
+    # gets the category_id of the catego
+    category_id = Category.query.filter_by(slug=slug).first_or_404(
+        description=f'There is no category with slug {slug}').id
+    products = Product.query.filter_by(category_id=category_id).paginate(
+        page=page, per_page=ROWS_PER_PAGE)
+    paginated_products = (products.items)
+    results = [product.serialize() for product in paginated_products]
+
+    return jsonify({'results': results, 'count': len(paginated_products)})
 
 
 def get_products():
