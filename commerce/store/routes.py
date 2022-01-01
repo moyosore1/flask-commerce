@@ -42,13 +42,18 @@ def api_create_category():
             return add_category(category_name=data.get('name', ''))
 
 
+@store.route('/<str:slug>/products')
+def api_category_products(slug):
+    return get_products_in_category(slug)
+
+
 @store.route('/store/categories')
-def all_categories():
+def api_all_categories():
     return get_categories()
 
 
 @store.route('/store/products')
-def all_products():
+def api_all_products():
     return get_products()
 
 
@@ -81,7 +86,7 @@ def get_categories():
 def get_products_in_category(slug):
     page = request.args.get('page', 1, type=int)
 
-    # gets the category_id of the catego
+    # gets the category_id of the category
     category_id = Category.query.filter_by(slug=slug).first_or_404(
         description=f'There is no category with slug {slug}').id
     products = Product.query.filter_by(category_id=category_id).paginate(
@@ -95,3 +100,9 @@ def get_products_in_category(slug):
 def get_products():
     products = db.session.query(Product).all()
     return jsonify(products=[product.serialize for product in products])
+
+
+def get_product(slug):
+    product = Product.query.filter_by(slug=slug).first_or_404(
+        description=f'There is no product with slug {slug}')
+    return jsonify(product.serialize)
