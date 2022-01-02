@@ -27,7 +27,7 @@ def create_app(config_class=Config):
     app.config.from_object(Config)
     app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///mydb.db'
     db.init_app(app)
-    CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     bcrypt.init_app(app)
 
