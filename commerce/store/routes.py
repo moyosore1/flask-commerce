@@ -7,12 +7,13 @@ from commerce import db
 
 from .models import Category, Product
 
-store = Blueprint('store', __name__)
 
 ROWS_PER_PAGE = 7
 
+store = Blueprint('store', __name__)
 
-@store.route('/admin/product/create', methods=['POST'])
+
+@store.route('/api/admin/product/create', methods=['POST'])
 def api_create_product():
     if request.method == "POST":
         data = request.get_json() or request.form
@@ -29,7 +30,7 @@ def api_create_product():
             return add_product(name, description, price, category_id, image)
 
 
-@store.route('/admin/category/create', methods=['POST'])
+@store.route('/api/admin/category/create', methods=['POST'])
 def api_create_category():
     if request.method == "POST":
         data = request.get_json() or request.form
@@ -42,17 +43,17 @@ def api_create_category():
             return add_category(category_name=data.get('name', ''))
 
 
-@store.route('/<str:slug>/products')
+@store.route('/api/<string:slug>/products')
 def api_category_products(slug):
     return get_products_in_category(slug)
 
 
-@store.route('/store/categories')
+@store.route('/api/store/categories')
 def api_all_categories():
     return get_categories()
 
 
-@store.route('/store/products')
+@store.route('/api/store/products')
 def api_all_products():
     return get_products()
 
