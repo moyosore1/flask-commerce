@@ -4,6 +4,7 @@ from cloudinary.uploader import upload
 
 
 from commerce import db
+from commerce.errors import bad_request
 
 from commerce.store.models import Product, Category
 
@@ -14,17 +15,21 @@ admin = Blueprint('admin', __name__)
 def api_create_product():
     if request.method == "POST":
         data = request.get_json() or request.form
-        product = Product.query.filter_by(
-            slug=data.get('slug', '')).first()
 
-        if not product:
-            name = data.get('name', '')
-            price = data.get('price', '')
-            description = data.get('description', '')
-            image = data.get('image', None)
-            print(image)
-            category_id = data.get('category_id', '')
-            return add_product(name, description, price, category_id, image)
+        fields = ['name', 'price', 'description', 'category_id']
+        for field in fields:
+            if field not in data:
+                print(f'Ran check for {field}')
+                message = f'{field} is required'
+                return bad_request(message)
+
+        name = data.get('name', '')
+        price = data.get('price', '')
+        description = data.get('description', '')
+        image = data.get('image', None)
+        print(image)
+        category_id = data.get('category_id', '')
+        return add_product(name, description, price, category_id, image)
 
 
 @admin.route('/admin/category/create', methods=['POST'])
