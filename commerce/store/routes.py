@@ -13,19 +13,24 @@ ROWS_PER_PAGE = 7
 store = Blueprint('store', __name__)
 
 
-@store.route('/api/<string:slug>/products')
+@store.route('/<string:slug>/products')
 def api_category_products(slug):
     return get_products_in_category(slug)
 
 
-@store.route('/api/store/categories')
+@store.route('/store/categories')
 def api_all_categories():
     return get_categories()
 
 
-@store.route('/api/store/products')
+@store.route('/store/products')
 def api_all_products():
     return get_products()
+
+
+@store.route('/store/<string:slug>')
+def api_product(slug):
+    return get_product(slug)
 
 
 def get_categories():

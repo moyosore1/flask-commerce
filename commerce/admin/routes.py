@@ -40,6 +40,9 @@ def api_create_category():
         category = Category.query.filter_by(
             slug=data.get('slug', '')).first()
 
+        if 'name' not in data:
+            return bad_request('name is required')
+
         if not category:
             print(data.get('name', ''))
             return add_category(category_name=data.get('name', ''))
