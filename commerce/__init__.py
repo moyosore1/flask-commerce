@@ -33,9 +33,11 @@ def create_app(config_class=Config):
 
     from commerce.store.routes import store
     from commerce.users.routes import users
+    from commerce.admin.routes import admin
 
     app.register_blueprint(users)
     app.register_blueprint(store)
+    app.register_blueprint(admin, url_prefix='/api')
 
     # from commerce.store.models import Product
     # with app.app_context():

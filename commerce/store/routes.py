@@ -13,36 +13,6 @@ ROWS_PER_PAGE = 7
 store = Blueprint('store', __name__)
 
 
-@store.route('/api/admin/product/create', methods=['POST'])
-def api_create_product():
-    if request.method == "POST":
-        data = request.get_json() or request.form
-        product = Product.query.filter_by(
-            slug=data.get('slug', '')).first()
-
-        if not product:
-            name = data.get('name', '')
-            price = data.get('price', '')
-            description = data.get('description', '')
-            image = data.get('image', None)
-            print(image)
-            category_id = data.get('category_id', '')
-            return add_product(name, description, price, category_id, image)
-
-
-@store.route('/api/admin/category/create', methods=['POST'])
-def api_create_category():
-    if request.method == "POST":
-        data = request.get_json() or request.form
-
-        category = Category.query.filter_by(
-            slug=data.get('slug', '')).first()
-
-        if not category:
-            print(data.get('name', ''))
-            return add_category(category_name=data.get('name', ''))
-
-
 @store.route('/api/<string:slug>/products')
 def api_category_products(slug):
     return get_products_in_category(slug)
@@ -56,26 +26,6 @@ def api_all_categories():
 @store.route('/api/store/products')
 def api_all_products():
     return get_products()
-
-
-def add_product(name, description, price, category_id, image=None):
-    image_url = 'sth'
-    if image is not None:
-        cloud_image = upload(image)
-        image_url = cloud_image.get('url')
-
-    product = Product(name=name, description=description,
-                      price=price, category_id=category_id, image=image_url)
-    db.session.add(product)
-    db.session.commit()
-    return jsonify(Product=product.serialize)
-
-
-def add_category(category_name):
-    category = Category(name=category_name)
-    db.session.add(category)
-    db.session.commit()
-    return jsonify(Category=category.serialize)
 
 
 def get_categories():
@@ -99,8 +49,10 @@ def get_products_in_category(slug):
 
 
 def get_products():
-    products = db.session.query(Product).all()
-    return jsonify(products=[product.serialize for product in products])
+    page = request.args.get('page', 1, type=int)
+    data = Product.to_collection_dict(Product.query, page, ROWS_PER_PAGE,
+                                      'store.api_all_products')
+    return jsonify(data)
 
 
 def get_product(slug):
