@@ -39,7 +39,8 @@ def create_app(config_class=Config):
     app.register_blueprint(store, url_prefix='/api')
     app.register_blueprint(admin, url_prefix='/api')
 
-    # from commerce.store.models import Product
+    # from commerce.store.models import Product, Category, Order, OrderItem
+    # from commerce.admin.models import Admin
     # with app.app_context():
     #     db.create_all()
 
