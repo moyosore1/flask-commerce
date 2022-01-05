@@ -5,13 +5,16 @@ from cloudinary.uploader import upload
 
 from commerce import db
 from commerce.errors import bad_request
-
 from commerce.store.models import Product, Category
+
+from .auth import token_auth
+
 
 admin = Blueprint('admin', __name__)
 
 
 @admin.route('/admin/product/create', methods=['POST'])
+@token_auth.login_required
 def api_create_product():
     if request.method == "POST":
         data = request.get_json() or request.form
@@ -33,6 +36,7 @@ def api_create_product():
 
 
 @admin.route('/admin/category/create', methods=['POST'])
+@token_auth.login_required
 def api_create_category():
     if request.method == "POST":
         data = request.get_json() or request.form
