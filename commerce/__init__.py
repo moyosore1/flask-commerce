@@ -8,10 +8,7 @@ from flask_cors import CORS, cross_origin
 import cloudinary as Cloud
 
 
-from .config import Config
-
 db = SQLAlchemy()
-
 
 bcrypt = Bcrypt()
 
@@ -22,14 +19,20 @@ Cloud.config.update = ({
 })
 
 
-def create_app(config_class=Config):
+def create_app(config=None):
     app = Flask(__name__)
-    app.config.from_object(Config)
-    app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///mydb.db'
+    if app.config['ENV'] == 'production':
+        app.config.from_object('config.Production')
+    
+    else:
+        app.config.from_object('config.Development')
+
     db.init_app(app)
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     bcrypt.init_app(app)
+    
+    CORS(app, supports_credentials=True)
+
 
     from commerce.store.routes import store
     from commerce.users.routes import users
@@ -39,9 +42,8 @@ def create_app(config_class=Config):
     app.register_blueprint(store, url_prefix='/api')
     app.register_blueprint(admin, url_prefix='/api')
 
+    from commerce.users.models import Users
     # from commerce.store.models import Product, Category, Order, OrderItem
     # from commerce.admin.models import Admin
-    # with app.app_context():
-    #     db.create_all()
 
     return app
