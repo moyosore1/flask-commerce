@@ -2,7 +2,6 @@ from flask import Blueprint, request, jsonify
 from commerce import create_app, db, bcrypt
 from commerce.users.models import Users
 import jwt
-import uuid
 
 
 users = Blueprint('users', __name__)
@@ -23,7 +22,7 @@ def register():
             return "Email already exists"
         else:
             hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
-            new_user = Users(id=str(uuid.uuid4()), name=data['name'], email=data['email'], password=hashed_password)
+            new_user = Users(name=data['name'], email=data['email'], password=hashed_password)
             db.session.add(new_user)
             db.session.commit()
             return {"message": f"user {new_user.name} has been registered successfully."}
