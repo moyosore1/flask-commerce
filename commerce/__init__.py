@@ -1,12 +1,22 @@
+import os
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
+
+import cloudinary as Cloud
 
 
 db = SQLAlchemy()
 
 bcrypt = Bcrypt()
+
+Cloud.config.update = ({
+    'cloud_name': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'api_key': os.environ.get('CLOUDINARY_API_KEY'),
+    'api_secret': os.environ.get('CLOUDINARY_API_SECRET')
+})
 
 
 def create_app(config=None):
@@ -23,14 +33,17 @@ def create_app(config=None):
     
     CORS(app, supports_credentials=True)
 
+
     from commerce.store.routes import store
     from commerce.users.routes import users
+    from commerce.admin.routes import admin
 
     app.register_blueprint(users)
-    app.register_blueprint(store)
+    app.register_blueprint(store, url_prefix='/api')
+    app.register_blueprint(admin, url_prefix='/api')
 
     from commerce.users.models import Users
-    # with app.app_context():
-    #     db.create_all()
+    # from commerce.store.models import Product, Category, Order, OrderItem
+    # from commerce.admin.models import Admin
 
     return app
