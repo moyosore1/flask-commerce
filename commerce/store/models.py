@@ -66,9 +66,9 @@ class Product(PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     slug = db.Column(db.String(100), nullable=False)
-    price = db.Column(db.Numeric(5, 2))
+    price = db.Column(db.Numeric())
     description = db.Column(db.Text)
-    image = db.Column(db.String(200), nullable=True)
+    image = db.Column(db.String(400), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey(
         'category.id'), nullable=False)
     product_items = db.relationship(

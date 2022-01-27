@@ -5,19 +5,19 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS, cross_origin
 
-import cloudinary as Cloud
+import cloudinary
 
 
 db = SQLAlchemy()
 
 bcrypt = Bcrypt()
 
-Cloud.config.update = ({
-    'cloud_name': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    'api_key': os.environ.get('CLOUDINARY_API_KEY'),
-    'api_secret': os.environ.get('CLOUDINARY_API_SECRET')
-})
 
+cloudinary.config(
+    cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    api_key = os.environ.get('CLOUDINARY_API_KEY'),
+    api_secret = os.environ.get('CLOUDINARY_API_SECRET')
+)
 
 def create_app(config=None):
     app = Flask(__name__)
@@ -43,7 +43,7 @@ def create_app(config=None):
     app.register_blueprint(admin, url_prefix='/api')
 
     from commerce.users.models import Users
-    # from commerce.store.models import Product, Category, Order, OrderItem
-    # from commerce.admin.models import Admin
+    from commerce.store.models import Product, Category, Order, OrderItem
+    from commerce.admin.models import Admin
 
     return app
