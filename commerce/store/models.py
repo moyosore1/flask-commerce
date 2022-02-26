@@ -49,7 +49,7 @@ class Category(PaginatedAPIMixin, db.Model):
             kwargs['slug'] = slugify(kwargs.get('name', ''))
         super().__init__(*args, **kwargs)
 
-    # @property
+    @property
     def serialize(self):
         return {
             'id': self.id,

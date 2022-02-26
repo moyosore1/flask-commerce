@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from cloudinary.uploader import upload
-from commerce.admin.controllers.category import api_category, api_create_category
+from commerce.admin.controllers.category import api_category, api_create_category, api_delete_category, api_edit_category
 from commerce.admin.controllers.product import api_create_product, api_delete_product, api_product, api_edit_product
 from .auth import token_auth
 
@@ -37,10 +37,19 @@ def category_create():
     return data
 
 
-@admin.route('/admin/<int:id>', methods=['PUT'])
+@admin.route('/admin/category/edit/<int:id>', method=['PUT'])
+def category_edit(id):
+    return api_edit_category(id)
+
+
+@admin.route('/admin/category/delete/<int:id>', method=['DELETE'])
+def category_edit(id):
+    return api_delete_category(id)
+
+@admin.route('/admin/product/edit/<int:id>', methods=['PUT'])
 def product_edit(id):
     return api_edit_product(id)
 
-@admin.route('/admin/<int:id>', methods=['DELETE'])
+@admin.route('/admin/product/delete/<int:id>', methods=['DELETE'])
 def product_delete(id):
     return api_delete_product(id)

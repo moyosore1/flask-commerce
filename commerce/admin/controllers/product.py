@@ -1,17 +1,16 @@
-from http.client import NO_CONTENT
-from math import prod
-from unicodedata import category
 from flask import Blueprint, jsonify, request
 from cloudinary.uploader import upload
+from werkzeug.http import HTTP_STATUS_CODES
+
+from math import prod
+from unicodedata import category
+
 from commerce import db
 from commerce.errors import bad_request
 from commerce.store.models import Product
 
 
-NOT_FOUND = 404
-INVALID = 403
-OK = 200
-NO_CONTENT = 204
+
 # -------------------------------Controllers
 def api_product():
     product = Product.query.all()
@@ -45,7 +44,7 @@ def api_delete_product(id):
         name = product.name
         db.session.delete(product)
         db.session.commit()
-        return jsonify({"Success":f'Successfully deleted product {name}'}), NO_CONTENT
+        return jsonify({"Success":f'Successfully deleted product {name}'}), HTTP_STATUS_CODES.get(204)
 #-----------------------------------Controllers
 
 
