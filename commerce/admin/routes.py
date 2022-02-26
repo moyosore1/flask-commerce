@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from cloudinary.uploader import upload
 from commerce.admin.controllers.category import api_category, api_create_category
-from commerce.admin.controllers.product import api_create_product, api_product
+from commerce.admin.controllers.product import api_create_product, api_product, api_edit_product
 from .auth import token_auth
 
 
@@ -37,4 +37,6 @@ def category_create():
     return data
 
 
-
+@admin.route('/admin/<int:id>', methods=['PUT'])
+def product_edit(id):
+    return api_edit_product(id)

@@ -1,3 +1,4 @@
+from math import prod
 from unicodedata import category
 from flask import Blueprint, jsonify, request
 from cloudinary.uploader import upload
@@ -5,7 +6,7 @@ from commerce import db
 from commerce.errors import bad_request
 from commerce.store.models import Product
 
-
+# -------------------------------Controllers
 def api_product():
     product = Product.query.all()
     return jsonify([*map(product_serializer, product)])
@@ -21,6 +22,19 @@ def api_create_product():
         category_id = data['category_id']
         return add_product(name, description, price, category_id, image)
 
+
+def api_edit_product(id):
+    if request.method == "PUT":
+        product = Product.query.get_or_404(id)
+        data = request.get_json() or request.form
+        product.from_dict(data)
+        db.session.commit()
+        print(product.to_dict())
+        return jsonify(product.to_dict())
+#-----------------------------------Controllers
+
+
+#  ---------------------------- Helper Functions
 def product_serializer(product):
     return{
         "id": product.id,
@@ -45,3 +59,6 @@ def add_product(name, description, price, category_id, image):
         'image': product.image,
        ' category': product.category_id
     })
+
+
+#----------------------------------Helper Functions

@@ -94,6 +94,15 @@ class Product(PaginatedAPIMixin, db.Model):
             'category_id': self.category_id,
 
         }
+    
+    # converts Python representation to a model
+    def from_dict(self, data):
+        # loop through fields that can be set by user 
+        # checks if a value was provided by user and sets it
+        for field in ['name', 'description', 'category_id', 'price', 'image']:
+            if field in data:
+                setattr(self, field, data[field])
+         
 
 
 class Order(db.Model):
