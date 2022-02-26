@@ -1,3 +1,4 @@
+from http.client import NO_CONTENT
 from math import prod
 from unicodedata import category
 from flask import Blueprint, jsonify, request
@@ -6,6 +7,11 @@ from commerce import db
 from commerce.errors import bad_request
 from commerce.store.models import Product
 
+
+NOT_FOUND = 404
+INVALID = 403
+OK = 200
+NO_CONTENT = 204
 # -------------------------------Controllers
 def api_product():
     product = Product.query.all()
@@ -30,7 +36,16 @@ def api_edit_product(id):
         product.from_dict(data)
         db.session.commit()
         print(product.to_dict())
+        print(product_serializer(product))
         return jsonify(product.to_dict())
+
+def api_delete_product(id):
+    if request.method == "DELETE":
+        product = Product.query.get_or_404(id)
+        name = product.name
+        db.session.delete(product)
+        db.session.commit()
+        return jsonify({"Success":f'Successfully deleted product {name}'}), NO_CONTENT
 #-----------------------------------Controllers
 
 
