@@ -37,13 +37,13 @@ def category_create():
     return data
 
 
-@admin.route('/admin/category/edit/<int:id>', method=['PUT'])
+@admin.route('/admin/category/edit/<int:id>', methods=['PUT'])
 def category_edit(id):
     return api_edit_category(id)
 
 
-@admin.route('/admin/category/delete/<int:id>', method=['DELETE'])
-def category_edit(id):
+@admin.route('/admin/category/delete/<int:id>', methods=['DELETE'])
+def category_delete(id):
     return api_delete_category(id)
 
 @admin.route('/admin/product/edit/<int:id>', methods=['PUT'])
