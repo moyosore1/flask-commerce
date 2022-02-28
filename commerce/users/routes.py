@@ -5,7 +5,7 @@ import jwt
 
 
 users = Blueprint('users', __name__)
-app = create_app()
+# app = create_app()
 
 
 @users.route('/users')
