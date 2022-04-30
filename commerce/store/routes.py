@@ -34,7 +34,7 @@ def api_product(slug):
 
 
 def get_categories():
-    categories = db.session.query(Category).all()
+    categories = db.session.query(Category).order_by(Category.id).all()
     return jsonify(categories=[category.serialize for category in categories])
 
 

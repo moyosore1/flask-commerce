@@ -10,8 +10,6 @@ from commerce.store.models import Category
 
 def api_category():
     category = Category.query.order_by(Category.id).all()
-    print(len(category))
-
     return jsonify([*map(category_serializer, category)])
 
 
