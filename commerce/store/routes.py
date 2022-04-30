@@ -55,8 +55,9 @@ def get_products_in_category(slug):
 
 def get_products():
     page = request.args.get('page', 1, type=int)
-    data = Product.to_collection_dict(Product.query, page, ROWS_PER_PAGE,
+    data = Product.to_collection_dict(Product.query.order_by(Product.id), page, ROWS_PER_PAGE,
                                       'store.api_all_products')
+
     return jsonify(data)
 
 

@@ -3,7 +3,7 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 
 import cloudinary
 
@@ -14,25 +14,25 @@ bcrypt = Bcrypt()
 
 
 cloudinary.config(
-    cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    api_key = os.environ.get('CLOUDINARY_API_KEY'),
-    api_secret = os.environ.get('CLOUDINARY_API_SECRET')
+    cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.environ.get('CLOUDINARY_API_KEY'),
+    api_secret=os.environ.get('CLOUDINARY_API_SECRET')
 )
+
 
 def create_app(config=None):
     app = Flask(__name__)
     if app.config['ENV'] == 'production':
         app.config.from_object('config.Production')
-    
+
     else:
         app.config.from_object('config.Development')
 
     db.init_app(app)
 
     bcrypt.init_app(app)
-    
-    CORS(app, supports_credentials=True)
 
+    CORS(app, supports_credentials=True)
 
     from commerce.store.routes import store
     from commerce.users.routes import users

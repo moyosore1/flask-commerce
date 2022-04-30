@@ -1,3 +1,4 @@
+from sqlite3 import IntegrityError
 from flask import Blueprint, jsonify, request
 from werkzeug.http import HTTP_STATUS_CODES
 from slugify import slugify
@@ -53,9 +54,12 @@ def api_delete_category(id):
     if request.method == "DELETE":
         category = Category.query.get_or_404(id)
         name = category.name
-        db.session.delete(category)
-        db.session.commit()
-        return jsonify({"Success": f'Successfully deleted product {name}'}), HTTP_STATUS_CODES.get(204)
+        try:
+            db.session.delete(category)
+            db.session.commit()
+        except IntegrityError as e:
+            pass
+        return jsonify({"Success": f'Successfully deleted category {name}'}), HTTP_STATUS_CODES.get(204)
 
 
 def category_serializer(category):

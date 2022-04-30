@@ -10,11 +10,11 @@ from commerce.errors import bad_request
 from commerce.store.models import Product
 
 
-
 # -------------------------------Controllers
 def api_product():
-    product = Product.query.all()
+    product = Product.query.order_by(Product.id).all()
     return jsonify([*map(product_serializer, product)])
+
 
 def api_create_product():
     if request.method == "POST":
@@ -23,7 +23,7 @@ def api_create_product():
         name = data['name']
         price = data['price']
         description = data['description']
-        image = request.files['image']
+        image = request.files['image'] or None
         category_id = data['category_id']
         return add_product(name, description, price, category_id, image)
 
@@ -34,9 +34,8 @@ def api_edit_product(id):
         data = request.get_json() or request.form
         product.from_dict(data)
         db.session.commit()
-        print(product.to_dict())
-        print(product_serializer(product))
-        return jsonify(product.to_dict())
+        return jsonify(product.serialize)
+
 
 def api_delete_product(id):
     if request.method == "DELETE":
@@ -44,8 +43,8 @@ def api_delete_product(id):
         name = product.name
         db.session.delete(product)
         db.session.commit()
-        return jsonify({"Success":f'Successfully deleted product {name}'}), HTTP_STATUS_CODES.get(204)
-#-----------------------------------Controllers
+        return jsonify({"Success": f'Successfully deleted product {name}'}), HTTP_STATUS_CODES.get(204)
+# -----------------------------------Controllers
 
 
 #  ---------------------------- Helper Functions
@@ -58,10 +57,11 @@ def product_serializer(product):
         "category": product.category_id
     }
 
-def add_product(name, description, price, category_id, image):
-    cloud_image = upload(image)
-    image_url = cloud_image.get('secure_url')
-    print(image_url)
+
+def add_product(name, description, price, category_id, image=None):
+    if image:
+        cloud_image = upload(image)
+        image_url = cloud_image.get('secure_url')
     product = Product(name=name, description=description,
                       price=price, category_id=category_id, image=image_url)
     db.session.add(product)
@@ -71,8 +71,8 @@ def add_product(name, description, price, category_id, image):
         'description': product.description,
         'price': product.price,
         'image': product.image,
-       ' category': product.category_id
+        ' category': product.category_id
     })
 
 
-#----------------------------------Helper Functions
+# ----------------------------------Helper Functions

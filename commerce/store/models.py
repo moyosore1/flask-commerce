@@ -70,7 +70,7 @@ class Product(PaginatedAPIMixin, db.Model):
     description = db.Column(db.Text)
     image = db.Column(db.String(400), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey(
-        'category.id'), nullable=False)
+        'category.id', ondelete='SET_NULL'), nullable=True)
     product_items = db.relationship(
         'OrderItem', backref='product_item', lazy=True)
 
